@@ -4,3 +4,6 @@ Pipfile.lock
 
 # Python
 __pycache__
+
+# Exclude system generated files
+.DS_Store
