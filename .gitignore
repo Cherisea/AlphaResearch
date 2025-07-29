@@ -7,3 +7,6 @@ __pycache__
 
 # Exclude system generated files
 .DS_Store
+
+# Ignore notebook scripts
+*.ipynb
