@@ -84,5 +84,27 @@ def prepare_data(ticker_list, start_date, end_date):
     
     return all_data
 
+def save_to_file(all_data, file_path):
+    """Save a list of dataframes to a csv file.
+
+    Args:
+        all_data(list): a list of dataframes of market data
+        file_path(str/Path)
+    """
+    # Stack dataframes vertically and reset index
+    df = pd.concat(all_data, ignore_index=True)
+
+    # Drop rows with invalid value for the target column
+    df.dropna(subset=['Tomorrow Return'], inplace=True)
+    df = df[np.isfinite(df['Tomorrow Return'])]
+
+    df = df[['Ticker', 'Date', 'Relative Volume', 'Amount', 'Turnover',
+         'Open Change', 'High Change', 'Low Change', 'Close Change',
+         'Tomorrow Return']]
+
+    df.to_csv(file_path, index=False)
+    print(f"Market data saved to {file_path}")
+
+
 
     
