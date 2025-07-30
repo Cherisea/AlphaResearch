@@ -56,7 +56,7 @@ def prepare_data(ticker_list, start_date, end_date):
     """
     all_data = []
 
-    for ticker in ticker_list:
+    for ticker in tqdm(ticker_list, desc="Processing tickers"):
         raw_df = yf.download(ticker, start_date, end_date)
 
         # Skip if can't retrieve market data
