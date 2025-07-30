@@ -10,3 +10,6 @@ __pycache__
 
 # Ignore notebook scripts
 *.ipynb
+
+# Ignore generated csv files
+*.csv
