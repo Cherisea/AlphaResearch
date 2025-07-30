@@ -10,8 +10,11 @@ def compute_features(data, shares) -> pd.DataFrame:
     column is produced by shifting all returns backwards by one day. 
 
     Args:
-        data: yf dataframe consisting of five columns ['Open', 'High', 'Close', 'Low', 'Volume']
-        shares: number of outstanding shares 
+        data(pd.DataFrame): yf dataframe consisting of five columns ['Open', 'High', 'Close', 'Low', 'Volume']
+        shares(int): number of outstanding shares 
+    
+    Returns:
+        data(pd.DataFrame): dataframe with addtional features 
     """
     data['Amount'] = data['Close'] * data['Volume']
     data['Relative Volume(20d)'] = data['Volume'] / data['Volume'].rolling(20).mean()
@@ -32,3 +35,38 @@ def compute_features(data, shares) -> pd.DataFrame:
     data['Tomorrow Return'] = data['Today Return'].shift(-1)
 
     return data
+
+def prepare_data(ticker_list, start_date, end_date):
+    """Create a data file in a format required by a ML model.
+
+    This method downloads raw market data from yfinance, adds additional derived features and
+    store it in a file format for use by a model.
+
+    Args:
+        ticker_list(list): a list of stock tickers (U.S market)
+        start_date(str): start date of market data to pull
+        end_date(str): end date of market data to pull
+    
+    """
+    for ticker in ticker_list:
+        raw_df = yf.download(ticker, start_date, end_date)
+
+        # Skip if can't retrieve market data
+        if raw_df.empty():
+            continue
+        
+        # Create a deep copy of raw df with only columns we need
+        data = raw_df[['Open', 'High', 'Low', 'Close', 'Volume']].copy()
+
+        # Fetch number of shares outstanding
+        ticker_info = yf.Ticker(ticker).info
+        shares = ticker_info.get('sharesOutstanding', np.nan)
+        
+        # Process raw dataframe
+        df = compute_features(data, shares)
+    
+    return df
+
+
+
+    
