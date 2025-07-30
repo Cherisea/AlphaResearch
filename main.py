@@ -101,7 +101,7 @@ def save_to_file(all_data, file_path):
     df.dropna(subset=['Tomorrow Return'], inplace=True)
     df = df[np.isfinite(df['Tomorrow Return'])]
 
-    df = df[['Ticker', 'Date', 'Relative Volume', 'Amount', 'Turnover',
+    df = df[['Ticker', 'Date', 'Relative Volume(20d)', 'Amount', 'Turnover',
          'Open Change', 'High Change', 'Low Change', 'Close Change',
          'Tomorrow Return']]
 
