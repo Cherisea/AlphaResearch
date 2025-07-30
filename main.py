@@ -2,6 +2,7 @@ import yfinance as yf
 import numpy as np
 import pandas as pd
 import requests
+from tqdm import tqdm
 from bs4 import BeautifulSoup
 
 def compute_features(data, shares) -> pd.DataFrame:
@@ -132,7 +133,11 @@ def get_tickers():
     return tickers
 
 def main():
-    get_tickers()
+    start_date = '2022-01-01'
+    end_date = '2025-01-01'
+    ticker_list = get_tickers()
+    data = prepare_data(ticker_list, start_date, end_date)
+    save_to_file(data, 'df.csv')
 
 if __name__ == '__main__':
     main()
