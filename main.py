@@ -1,6 +1,8 @@
 import yfinance as yf
 import numpy as np
 import pandas as pd
+import requests
+from bs4 import BeautifulSoup
 
 def compute_features(data, shares) -> pd.DataFrame:
     """Calculate addtional features from a raw dataframe fetched from yf.
@@ -105,6 +107,33 @@ def save_to_file(all_data, file_path):
     df.to_csv(file_path, index=False)
     print(f"Market data saved to {file_path}")
 
+def get_tickers():
+    """Retrieve a list of S&P500 tickers from Wikipedia.
 
+    Returns:
+    
+    """
+    wiki_url = 'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies'
+    response = requests.get(wiki_url)
 
+    assert response.status_code == 200, "Server didn't send a valid response!"
+
+    soup = BeautifulSoup(response.content, 'html.parser')
+    table = soup.find('table', {'id': 'constituents'})
+    
+    tickers = []
+    for row in table.find_all('tr')[1:]:
+        cells = row.find_all('td')
+        if cells:
+            ticker = cells[0].text.strip()
+            if ticker:
+                tickers.append(ticker)
+    
+    return tickers
+
+def main():
+    get_tickers()
+
+if __name__ == '__main__':
+    main()
     
