@@ -47,12 +47,17 @@ def prepare_data(ticker_list, start_date, end_date):
         start_date(str): start date of market data to pull
         end_date(str): end date of market data to pull
     
+    Returns:
+        all_data(list): a list of dataframes, where each one contains an enhanced dataframe
+            for each stock
     """
+    all_data = []
+
     for ticker in ticker_list:
         raw_df = yf.download(ticker, start_date, end_date)
 
         # Skip if can't retrieve market data
-        if raw_df.empty():
+        if raw_df.empty:
             continue
         
         # Create a deep copy of raw df with only columns we need
@@ -64,9 +69,20 @@ def prepare_data(ticker_list, start_date, end_date):
         
         # Process raw dataframe
         df = compute_features(data, shares)
-    
-    return df
 
+        # Drop nested index and remaining index names
+        df.columns = df.columns.droplevel(1)
+        df.columns.name = None
+
+        # Replace inner index with a separate column
+        df['Ticker'] = ticker
+
+        # Reverts index back to integer-based index
+        df.reset_index(inplace=True)
+
+        all_data.append(df)
+    
+    return all_data
 
 
     
