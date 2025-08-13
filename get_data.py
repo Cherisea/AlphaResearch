@@ -19,6 +19,10 @@ def compute_features(data, shares) -> pd.DataFrame:
     Returns:
         data(pd.DataFrame): dataframe with addtional features 
     """
+    # Drop nested column and remaining column names
+    data.columns = data.columns.droplevel(1)
+    data.columns.name = None
+
     data['Amount'] = data['Close'] * data['Volume']
     data['Relative Volume(20d)'] = data['Volume'] / data['Volume'].rolling(20).mean()
 
@@ -27,11 +31,11 @@ def compute_features(data, shares) -> pd.DataFrame:
     else:
         data['Turnover'] = np.nan
 
-     # Compute daily price changes
-    data['Open Change'] = data['Open'].pct_change()
-    data['High Change'] = data['High'].pct_change()
-    data['Close Change'] = data['Close'].pct_change()
-    data['Low Change'] = data['Low'].pct_change()
+     # Compute overnight price changes
+    data['Open Change(overnight)'] = data['Open'] / data['Close'].shift(1) - 1
+    data['High Change(overnight)'] = data['High'] / data['Close'].shift(1) - 1
+    data['Close Change(overnight)'] = data['Close'] / data['Close'].shift(1) - 1
+    data['Low Change(overnight)'] = data['Low'] / data['Close'].shift(1) - 1
     
     # Create price prediction target
     data['Today Return'] = data['Close Change']
@@ -72,10 +76,6 @@ def prepare_data(ticker_list, start_date, end_date):
         
         # Process raw dataframe
         df = compute_features(data, shares)
-
-        # Drop nested index and remaining index names
-        df.columns = df.columns.droplevel(1)
-        df.columns.name = None
 
         # Replace inner index with a separate column
         df['Ticker'] = ticker
@@ -135,6 +135,7 @@ def get_tickers():
 def main():
     start_date = '2022-01-01'
     end_date = '2025-01-01'
+
     ticker_list = get_tickers()
     data = prepare_data(ticker_list, start_date, end_date)
     save_to_file(data, 'df.csv')
