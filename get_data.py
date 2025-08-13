@@ -2,6 +2,7 @@ import yfinance as yf
 import numpy as np
 import pandas as pd
 import requests
+import os
 from tqdm import tqdm
 from bs4 import BeautifulSoup
 
@@ -87,13 +88,18 @@ def prepare_data(ticker_list, start_date, end_date):
     
     return all_data
 
-def save_to_file(all_data, file_path):
+def save_to_file(all_data):
     """Save a list of dataframes to a csv file.
 
     Args:
         all_data(list): a list of dataframes of market data
         file_path(str/Path)
     """
+    file_path = input("Path to save file: ").strip()
+    dir_name = os.path.dirname(file_path)
+    if not os.path.exists(dir_name):
+        raise FileNotFoundError("Directary doesn't exist. Please try again.")
+
     # Stack dataframes vertically and reset index
     df = pd.concat(all_data, ignore_index=True)
 
@@ -138,7 +144,7 @@ def main():
 
     ticker_list = get_tickers()
     data = prepare_data(ticker_list, start_date, end_date)
-    save_to_file(data, 'df.csv')
+    save_to_file(data)
 
 if __name__ == '__main__':
     main()
