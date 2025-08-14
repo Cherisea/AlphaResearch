@@ -10,14 +10,14 @@ def winsorize(col, mode=2, upper=0.99, low=0.01, z=5):
     either direction to clip values. This method defaults to the latter mode.
 
     Args:
-        col(str): dataframe column to clip
+        col(str): a numeric dataframe column to clip
         mode: type of winsorization strategy. Defaults to MAD based winsorization.
         upper: upper bound of quantile winsorization.
         lower: lower bound of quantile winsorzation.
         z: number of MADs that delimits the range of MAD based strategy.
 
     Returns:
-
+        col(str): a modified version of original column after applying winsorization
     """
     if mode == 1:
         upper_bound = col.quantile(upper)
@@ -29,3 +29,23 @@ def winsorize(col, mode=2, upper=0.99, low=0.01, z=5):
         lower_bound = median - z * mad
     col = col.clip(lower_bound, upper_bound)
     return col
+
+def standardize(df, col_list):
+    """Standardize a list of numeric columns in a dataframe.
+    
+    Rescales columns with z-score normalization(standardization). Result data points have a mean of 0 and std of 1.
+
+    Args:
+        df()
+    """
+    for col in col_list:
+        df[col + ' (Standardized)'] = (df[col] - df.groupby('Date')[col].transform('mean')) / df.groupby('Date')[col].transform('std')
+        
+        # Fix NAN values when both denominator and numerator are 0
+        df[col + ' (Standardized)'].fillna(0.0, inplace=True)
+
+        # Fix inf/-inf values when numerator is not 0 but denominator is
+        df[col + ' (Standardized)'].replace([np.inf, -np.inf], 0.0, inplace=True)
+    
+    return df
+
