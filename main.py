@@ -36,7 +36,11 @@ def standardize(df, col_list):
     Rescales columns with z-score normalization(standardization). Result data points have a mean of 0 and std of 1.
 
     Args:
-        df()
+        df(DataFrame): a dataframe object with numeric columns
+        col_list(list): a list of numeric columns to be rescaled
+    
+    Returns:
+        df(DataFrame): rescaled dataframe object
     """
     for col in col_list:
         df[col + ' (Standardized)'] = (df[col] - df.groupby('Date')[col].transform('mean')) / df.groupby('Date')[col].transform('std')
