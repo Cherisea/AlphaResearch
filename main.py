@@ -53,3 +53,18 @@ def standardize(df, col_list):
     
     return df
 
+def train_test_split(file_path, col_list):
+    df = pd.read_csv(file_path)
+
+    # Convert string Date field to datetime object
+    df['Date'] = pd.to_datetime(df['Date'])
+
+    # Apply winsorization
+    for col in col_list:
+        df[col] = df.groupby('Date')[col].transform(winsorize)
+    
+    # Apply standardization
+    df = standardize(df, col_list)
+
+        
+
