@@ -39,7 +39,7 @@ def compute_features(data, shares) -> pd.DataFrame:
     data['Low Change(overnight)'] = data['Low'] / data['Close'].shift(1) - 1
     
     # Create price prediction target
-    data['Today Return'] = data['Close Change']
+    data['Today Return'] = data['Close Change(overnight)']
     data['Tomorrow Return'] = data['Today Return'].shift(-1)
 
     return data
@@ -108,7 +108,7 @@ def save_to_file(all_data):
     df = df[np.isfinite(df['Tomorrow Return'])]
 
     df = df[['Ticker', 'Date', 'Relative Volume(20d)', 'Amount', 'Turnover',
-         'Open Change', 'High Change', 'Low Change', 'Close Change',
+         'Open Change(overnight)', 'High Change(overnight)', 'Low Change(overnight)', 'Close Change(overnight)',
          'Tomorrow Return']]
 
     df.to_csv(file_path, index=False)
