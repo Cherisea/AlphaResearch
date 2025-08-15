@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import os
 from sklearn.model_selection import train_test_split
 
 def winsorize(col, mode=2, upper=0.99, low=0.01, z=5):
@@ -54,23 +55,23 @@ def standardize(df, col_list):
     
     return df
 
+def save_to_hdf(file_path, col_list):
+    file_path = "raw_data.csv"
+    col_list = ['Volume', 'Amount', 'Turnover', 'Open Change', 
+                'High Change', 'Low Change', 'Close Change',
+                'Tomorrow Return']
+    df = pd.read_csv(file_path)
+    df = df.dropna(subset=col_list)
 
-file_path = "raw_data.csv"
-col_list = ['Volume', 'Amount', 'Turnover', 'Open Change', 
-            'High Change', 'Low Change', 'Close Change',
-            'Tomorrow Return']
-df = pd.read_csv(file_path)
-df = df.dropna(subset=col_list)
+    # Apply winsorization
+    for col in col_list:
+        df[col] = df.groupby('Date')[col].transform(winsorize)
 
-# Apply winsorization
-for col in col_list:
-    df[col] = df.groupby('Date')[col].transform(winsorize)
+    # Apply standardization
+    df = standardize(df, col_list)
 
-# Apply standardization
-df = standardize(df, col_list)
-
-df_train, df_test = train_test_split(df, test_size=0.2)
-df_train, df_validate = train_test_split(df_train, test_size=0.3)
-print(f"Train Data Type: {type(df_train)}, Length: {len(df_train)}")
-print(f"Test Data Type: {type(df_test)}, Length: {len(df_test)}")
-print(f"Validatation Data Type: {type(df_validate)}, Length: {len(df_validate)}")
+    df_train, df_test = train_test_split(df, test_size=0.2)
+    df_train, df_validate = train_test_split(df_train, test_size=0.3)
+    df_train.to_hdf('df_train.h5', key='data', mode='w')
+    df_validate.to_hdf('df_validate.h5', key='data', mode='w')
+    df_test.to_hdf('df_test.h5', key='data', mode='w')
