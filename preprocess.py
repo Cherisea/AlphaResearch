@@ -56,6 +56,18 @@ def standardize(df, col_list):
     return df
 
 def save_to_hdf(file_path, col_list, save_folder="data"):
+    """Clean raw csv data file before saving it as HDF5 files.
+
+    This method applies a two-step data sanitization process: winsorization followed by standardization. Resulting 
+    data is then split into train, validation and test partitions with a ratio of (0.56, 0.24, 0.2) before being
+    saved as HDF files for downstream tasks.
+
+    Args:
+        file_path(str): path of raw csv data file
+        col_list(list): a list of columns to apply winsorization and standardization
+        save_folder(str): subdirectory to save generated HDF files
+    
+    """
     df = pd.read_csv(file_path)
     df = df.dropna(subset=col_list)
 
