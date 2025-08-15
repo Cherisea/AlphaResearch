@@ -25,7 +25,7 @@ def winsorize(col, mode=2, upper=0.99, low=0.01, z=5):
         lower_bound = col.quantile(low)
     else:
         median = col.median()
-        mad = col.median(np.abs(col - median))
+        mad = np.median(np.abs(col - median))
         upper_bound = median + z * mad
         lower_bound = median - z * mad
     col = col.clip(lower_bound, upper_bound)
@@ -55,10 +55,10 @@ def standardize(df, col_list):
     return df
 
 
-file_path = "data.csv"
-col_list = ['Relative Volume(20d)', 'Amount', 'Turnover',
-         'Open Change(overnight)', 'High Change(overnight)', 'Low Change(overnight)', 'Close Change(overnight)',
-         'Tomorrow Return']
+file_path = "raw_data.csv"
+col_list = ['Volume', 'Amount', 'Turnover', 'Open Change', 
+            'High Change', 'Low Change', 'Close Change',
+            'Tomorrow Return']
 df = pd.read_csv(file_path)
 
 # Apply winsorization
@@ -67,6 +67,10 @@ for col in col_list:
 
 # Apply standardization
 df = standardize(df, col_list)
+
+df_train, df_test = train_test_split(df, test_size=0.2)
+print(f"Data Type: {type(df_train)}, Length: {len(df_train)}")
+print(f"Data Type: {type(df_test)}, Length: {len(df_test)}")
 
     
 
