@@ -57,9 +57,6 @@ def standardize(df, col_list):
 
 def save_to_hdf(file_path, col_list):
     file_path = "raw_data.csv"
-    col_list = ['Volume', 'Amount', 'Turnover', 'Open Change', 
-                'High Change', 'Low Change', 'Close Change',
-                'Tomorrow Return']
     df = pd.read_csv(file_path)
     df = df.dropna(subset=col_list)
 
@@ -75,3 +72,17 @@ def save_to_hdf(file_path, col_list):
     df_train.to_hdf('df_train.h5', key='data', mode='w')
     df_validate.to_hdf('df_validate.h5', key='data', mode='w')
     df_test.to_hdf('df_test.h5', key='data', mode='w')
+
+def main():
+    file_path = input("Data File Path: ").strip()
+    dir_name = os.path.dirname(file_path)
+    if not os.path.exists(dir_name):
+        raise FileNotFoundError("Directary doesn't exist. Please try again.")
+    
+    col_list = ['Volume', 'Amount', 'Turnover', 'Open Change', 
+                'High Change', 'Low Change', 'Close Change',
+                'Tomorrow Return']
+    save_to_hdf(file_path, col_list)
+
+if __name__ == '__main__':
+    main()
