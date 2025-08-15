@@ -56,7 +56,6 @@ def standardize(df, col_list):
     return df
 
 def save_to_hdf(file_path, col_list):
-    file_path = "raw_data.csv"
     df = pd.read_csv(file_path)
     df = df.dropna(subset=col_list)
 
@@ -69,9 +68,9 @@ def save_to_hdf(file_path, col_list):
 
     df_train, df_test = train_test_split(df, test_size=0.2)
     df_train, df_validate = train_test_split(df_train, test_size=0.3)
-    df_train.to_hdf('df_train.h5', key='data', mode='w')
-    df_validate.to_hdf('df_validate.h5', key='data', mode='w')
-    df_test.to_hdf('df_test.h5', key='data', mode='w')
+    df_train.to_hdf('data/df_train.h5', key='data', mode='w')
+    df_validate.to_hdf('data/df_validate.h5', key='data', mode='w')
+    df_test.to_hdf('data/df_test.h5', key='data', mode='w')
 
 def main():
     file_path = input("Data File Path: ").strip()
