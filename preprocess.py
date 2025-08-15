@@ -47,10 +47,10 @@ def standardize(df, col_list):
         df[col + ' (Standardized)'] = (df[col] - df.groupby('Date')[col].transform('mean')) / df.groupby('Date')[col].transform('std')
         
         # Fix NAN values when both denominator and numerator are 0
-        df[col + ' (Standardized)'].fillna(0.0, inplace=True)
+        df[col + ' (Standardized)'] = df[col + ' (Standardized)'].fillna(0.0)
 
         # Fix inf/-inf values when numerator is not 0 but denominator is
-        df[col + ' (Standardized)'].replace([np.inf, -np.inf], 0.0, inplace=True)
+        df[col + ' (Standardized)'] = df[col + ' (Standardized)'].replace([np.inf, -np.inf], 0.0)
     
     return df
 
