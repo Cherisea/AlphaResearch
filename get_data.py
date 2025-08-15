@@ -93,7 +93,6 @@ def _compute_features(data, shares) -> pd.DataFrame:
     data.columns.name = None
 
     data['Amount'] = data['Close'] * data['Volume']
-    data['Relative Volume(20d)'] = data['Volume'] / data['Volume'].rolling(20).mean()
 
     if not np.isnan(shares):
         data['Turnover'] = data['Volume'] / shares
@@ -101,13 +100,13 @@ def _compute_features(data, shares) -> pd.DataFrame:
         data['Turnover'] = np.nan
 
      # Compute overnight price changes
-    data['Open Change(overnight)'] = data['Open'] / data['Close'].shift(1) - 1
-    data['High Change(overnight)'] = data['High'] / data['Close'].shift(1) - 1
-    data['Close Change(overnight)'] = data['Close'] / data['Close'].shift(1) - 1
-    data['Low Change(overnight)'] = data['Low'] / data['Close'].shift(1) - 1
+    data['Open Change'] = data['Open'] / data['Close'].shift(1) - 1
+    data['High Change'] = data['High'] / data['Close'].shift(1) - 1
+    data['Close Change'] = data['Close'] / data['Close'].shift(1) - 1
+    data['Low Change'] = data['Low'] / data['Close'].shift(1) - 1
     
     # Create price prediction target
-    data['Today Return'] = data['Close Change(overnight)']
+    data['Today Return'] = data['Close Change']
     data['Tomorrow Return'] = data['Today Return'].shift(-1)
 
     return data
