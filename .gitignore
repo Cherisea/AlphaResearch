@@ -12,4 +12,4 @@ __pycache__
 *.ipynb
 
 # Ignore generated csv files
-*.csv
+data/
