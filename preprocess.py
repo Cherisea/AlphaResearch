@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from sklearn.model_selection import train_test_split
 
 def winsorize(col, mode=2, upper=0.99, low=0.01, z=5):
     """Mitigate impact of outliers by applying winsorization to a data column.
@@ -53,18 +54,21 @@ def standardize(df, col_list):
     
     return df
 
-def train_test_split(file_path, col_list):
-    df = pd.read_csv(file_path)
 
-    # Convert string Date field to datetime object
-    df['Date'] = pd.to_datetime(df['Date'])
+file_path = "data.csv"
+col_list = ['Relative Volume(20d)', 'Amount', 'Turnover',
+         'Open Change(overnight)', 'High Change(overnight)', 'Low Change(overnight)', 'Close Change(overnight)',
+         'Tomorrow Return']
+df = pd.read_csv(file_path)
 
-    # Apply winsorization
-    for col in col_list:
-        df[col] = df.groupby('Date')[col].transform(winsorize)
+# Apply winsorization
+for col in col_list:
+    df[col] = df.groupby('Date')[col].transform(winsorize)
+
+# Apply standardization
+df = standardize(df, col_list)
+
     
-    # Apply standardization
-    df = standardize(df, col_list)
 
-        
+
 
