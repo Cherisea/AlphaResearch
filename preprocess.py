@@ -60,6 +60,7 @@ col_list = ['Volume', 'Amount', 'Turnover', 'Open Change',
             'High Change', 'Low Change', 'Close Change',
             'Tomorrow Return']
 df = pd.read_csv(file_path)
+df = df.dropna(subset=col_list)
 
 # Apply winsorization
 for col in col_list:
@@ -69,10 +70,7 @@ for col in col_list:
 df = standardize(df, col_list)
 
 df_train, df_test = train_test_split(df, test_size=0.2)
-print(f"Data Type: {type(df_train)}, Length: {len(df_train)}")
-print(f"Data Type: {type(df_test)}, Length: {len(df_test)}")
-
-    
-
-
-
+df_train, df_validate = train_test_split(df_train, test_size=0.3)
+print(f"Train Data Type: {type(df_train)}, Length: {len(df_train)}")
+print(f"Test Data Type: {type(df_test)}, Length: {len(df_test)}")
+print(f"Validatation Data Type: {type(df_validate)}, Length: {len(df_validate)}")
